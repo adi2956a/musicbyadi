@@ -1,0 +1,45 @@
+{
+  "description": "Multi-Account Cloudflare Storage Pool Configuration for Unlimited R2 Free Tiers",
+  "d1_database": {
+    "account_id": "YOUR_CLOUDFLARE_ACCOUNT_ID",
+    "database_id": "YOUR_D1_DATABASE_UUID",
+    "api_token": "YOUR_CLOUDFLARE_API_TOKEN"
+  },
+  "jwt_secret": "musicbyadi_family_secret_jwt_key_2026",
+  "storage_pools": [
+    {
+      "id": "pool-1",
+      "name": "Cloudflare Account 1 (Primary - 10GB Free)",
+      "account_id": "ACCOUNT_1_ID_HERE",
+      "bucket_name": "musicbyadi-audio-1",
+      "access_key_id": "R2_ACCESS_KEY_ID_1",
+      "secret_access_key": "R2_SECRET_ACCESS_KEY_1",
+      "public_url_or_domain": "https://pub-xxxxxx1.r2.dev",
+      "max_bytes": 10737418240,
+      "enabled": true
+    },
+    {
+      "id": "pool-2",
+      "name": "Cloudflare Account 2 (Secondary - Extra 10GB Free)",
+      "account_id": "ACCOUNT_2_ID_HERE",
+      "bucket_name": "musicbyadi-audio-2",
+      "access_key_id": "R2_ACCESS_KEY_ID_2",
+      "secret_access_key": "R2_SECRET_ACCESS_KEY_2",
+      "public_url_or_domain": "https://pub-xxxxxx2.r2.dev",
+      "max_bytes": 10737418240,
+      "enabled": false
+    },
+    {
+      "id": "pool-3",
+      "name": "Cloudflare Account 3 (Tertiary - Extra 10GB Free)",
+      "account_id": "ACCOUNT_3_ID_HERE",
+      "bucket_name": "musicbyadi-audio-3",
+      "access_key_id": "R2_ACCESS_KEY_ID_3",
+      "secret_access_key": "R2_SECRET_ACCESS_KEY_3",
+      "public_url_or_domain": "https://pub-xxxxxx3.r2.dev",
+      "max_bytes": 10737418240,
+      "enabled": false
+    }
+  ],
+  "upload_strategy": "round_robin"
+}

@@ -1,0 +1,21 @@
+name = "musicbyadi-api"
+main = "worker.ts"
+compatibility_date = "2024-09-01"
+
+# Cloudflare D1 Database binding
+[[d1_databases]]
+binding = "DB"
+database_name = "musicbyadi-d1"
+database_id = "YOUR_D1_DATABASE_UUID_HERE"
+
+# Cloudflare R2 Bucket binding (Zero Egress storage for audio and thumbnails)
+[[r2_buckets]]
+binding = "MUSIC_BUCKET"
+bucket_name = "musicbyadi-audio"
+
+# Environment Variables
+[vars]
+ENVIRONMENT = "production"
+
+# Secret required in production:
+# Run: npx wrangler secret put JWT_SECRET

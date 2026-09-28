@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Music by Adi — Family & Friends Streamer</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#000000">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+</head>
+<body>
+  <div class="app-container" id="app">
+    <!-- ONBOARDING OVERLAY (shown if unauthenticated) -->
+    <div id="onboarding-view" class="view hidden">
+      <div class="onboarding-card">
+        <div class="logo-mark">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M9 18V5l12-2v13"></path>
+            <circle cx="6" cy="18" r="3"></circle>
+            <circle cx="18" cy="16" r="3"></circle>
+          </svg>
+        </div>
+        <h1 class="app-title">MUSIC BY ADI</h1>
+        <p class="app-subtitle">Private Family &amp; Friends Streamer</p>
+
+        <form id="onboarding-form" onsubmit="handleOnboarding(event)">
+          <div class="form-group">
+            <label for="input-name">YOUR NAME</label>
+            <input type="text" id="input-name" placeholder="e.g. Adi or Sarah" required autocomplete="off">
+          </div>
+
+          <div class="form-group">
+            <label for="input-code">INVITE CODE</label>
+            <input type="text" id="input-code" placeholder="FAMILY" maxlength="6" required autocomplete="off">
+          </div>
+
+          <div id="onboarding-error" class="error-text hidden"></div>
+
+          <button type="submit" id="btn-join" class="btn btn-primary">Join Stream</button>
+        </form>
+
+        <div style="margin-top: 16px; display: flex; flex-direction: column; gap: 8px;">
+          <button type="button" id="btn-quick-admin" class="btn" style="background-color: var(--surface-alt); border: 1px solid var(--accent); color: var(--accent); font-size: 13px;">
+            ⚡ 1-Click Login as Admin / Owner
+          </button>
+          <button type="button" id="btn-quick-listener" class="btn" style="background-color: var(--surface); border: 1px solid var(--divider); color: var(--text-secondary); font-size: 12px;">
+            1-Click Login as Listener
+          </button>
+        </div>
+
+        <div class="quick-pass-hint">
+          <span>Manual Invite Codes: <code>FAMILY</code>, <code>JAM123</code>, <code>VIP456</code></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- MAIN SHELL (Active when logged in) -->
+    <div id="main-view" class="view hidden">
+      <!-- TOP NAVIGATION BAR -->
+      <header class="top-bar">
+        <div class="top-bar-left">
+          <span class="brand-title" id="screen-title">STREAM</span>
+        </div>
+        <div class="top-bar-right">
+          <!-- Inline expandable search -->
+          <div class="search-container" id="search-container">
+            <button class="icon-btn" id="btn-toggle-search" title="Search">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="11" cy="11" r="8"></circle>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+              </svg>
+            </button>
+            <input type="text" id="inline-search-input" placeholder="Search..." class="search-input hidden">
+            <button class="icon-btn hidden" id="btn-clear-search">✕</button>
+          </div>
+
+          <!-- Gear icon pushing settings -->
+          <button class="icon-btn" id="btn-open-settings" title="Settings">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="3"></circle>
+              <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+            </svg>
+          </button>
+        </div>
+      </header>
+
+      <!-- TAB CONTENTS -->
+      <main class="content-scrollable">
+        <!-- TAB 1: STREAM -->
+        <section id="tab-stream" class="tab-pane active">
+          <!-- Playlist Rail (§6) -->
+          <div class="playlist-rail-container" id="playlist-rail-container">
+            <div class="playlist-rail" id="playlist-rail">
+              <!-- Rendered via JS -->
+            </div>
+          </div>
+          <div class="rail-divider"></div>
+
+          <!-- Song List -->
+          <div class="section-header">
+            <span class="section-label">RECENT TRACKS</span>
+            <span class="offline-toggle-badge" id="offline-sim-toggle" title="Toggle Simulated Offline Mode">
+              ONLINE
+            </span>
+          </div>
+          <div class="song-list" id="stream-song-list">
+            <!-- Rendered via JS -->
+          </div>
+        </section>
+
+        <!-- TAB 2: PLAYLISTS -->
+        <section id="tab-playlists" class="tab-pane hidden">
+          <div class="section-header">
+            <span class="section-label">ALL PLAYLISTS</span>
+          </div>
+          <div class="playlist-list" id="playlists-list">
+            <!-- Rendered via JS -->
+          </div>
+        </section>
+
+        <!-- TAB 3: OFFLINE -->
+        <section id="tab-offline" class="tab-pane hidden">
+          <!-- Storage Bar (§6) -->
+          <div class="storage-container">
+            <div class="storage-meta">
+              <span class="storage-used" id="offline-storage-text">0.0 MB used</span>
+              <span class="storage-label">Offline Index</span>
+            </div>
+            <div class="storage-bar">
+              <div class="storage-fill" id="storage-fill" style="width: 5%"></div>
+            </div>
+          </div>
+
+          <!-- Segmented Filter Control: All / Playlists / Liked -->
+          <div class="segment-control">
+            <button class="segment-btn active" data-filter="all">All</button>
+            <button class="segment-btn" data-filter="playlists">Playlists</button>
+            <button class="segment-btn" data-filter="liked">Liked</button>
+          </div>
+
+          <div class="song-list" id="offline-song-list">
+            <!-- Rendered via JS -->
+          </div>
+        </section>
+      </main>
+
+      <!-- ROLE-GATED FAB (+ button for contributor/owner) -->
+      <button class="fab hidden" id="fab-create" title="Add Track / Playlist">+</button>
+
+      <!-- MINI PLAYER PINNED ABOVE BOTTOM BAR (§6) -->
+      <div class="mini-player hidden" id="mini-player">
+        <div class="mini-player-progress-bar">
+          <div class="mini-player-progress-fill" id="mini-progress-fill"></div>
+        </div>
+        <div class="mini-player-body">
+          <div class="mini-player-left" id="mini-player-expand-trigger">
+            <div class="mini-artwork">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/>
+              </svg>
+            </div>
+            <div class="mini-info">
+              <div class="mini-title" id="mini-title">Track Title</div>
+              <div class="mini-artist" id="mini-artist">Artist</div>
+            </div>
+          </div>
+          <div class="mini-controls">
+            <button class="icon-btn" id="mini-btn-play">
+              <svg id="mini-play-icon" width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                <polygon points="5 3 19 12 5 21 5 3"></polygon>
+              </svg>
+            </button>
+            <button class="icon-btn" id="mini-btn-next">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polygon points="5 4 15 12 5 20 5 4"></polygon>
+                <line x1="19" y1="5" x2="19" y2="19"></line>
+              </svg>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- BOTTOM NAVIGATION: 3 TABS ONLY (§6) -->
+      <nav class="bottom-nav">
+        <button class="nav-item active" data-tab="tab-stream">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="12" y1="1" x2="12" y2="23"></line>
+            <line x1="17" y1="5" x2="17" y2="19"></line>
+            <line x1="7" y1="8" x2="7" y2="16"></line>
+            <line x1="22" y1="9" x2="22" y2="15"></line>
+            <line x1="2" y1="9" x2="2" y2="15"></line>
+          </svg>
+          <span>Stream</span>
+        </button>
+        <button class="nav-item" data-tab="tab-playlists">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="8" y1="6" x2="21" y2="6"></line>
+            <line x1="8" y1="12" x2="21" y2="12"></line>
+            <line x1="8" y1="18" x2="21" y2="18"></line>
+            <line x1="3" y1="6" x2="3.01" y2="6"></line>
+            <line x1="3" y1="12" x2="3.01" y2="12"></line>
+            <line x1="3" y1="18" x2="3.01" y2="18"></line>
+          </svg>
+          <span>Playlists</span>
+        </button>
+        <button class="nav-item" data-tab="tab-offline">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+            <polyline points="7 10 12 15 17 10"></polyline>
+            <line x1="12" y1="15" x2="12" y2="3"></line>
+          </svg>
+          <span>Offline</span>
+        </button>
+      </nav>
+    </div>
+
+    <!-- EXPANDED PLAYER MODAL (§6) -->
+    <div id="expanded-player" class="modal-sheet hidden">
+      <div class="sheet-handle" id="expanded-player-close"></div>
+      <div class="expanded-header">
+        <button class="icon-btn" id="btn-collapse-player">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="6 9 12 15 18 9"></polyline>
+          </svg>
+        </button>
+        <span class="sheet-title">NOW PLAYING</span>
+        <div style="width: 40px"></div>
+      </div>
+
+      <div class="artwork-container">
+        <div class="artwork-box">
+          <div class="waveform-animation" id="waveform">
+            <span></span><span></span><span></span><span></span><span></span>
+          </div>
+          <div class="artwork-badge">HYBRID AUDIO</div>
+        </div>
+      </div>
+
+      <div class="expanded-song-info">
+        <div class="expanded-title" id="expanded-title">Song Title</div>
+        <div class="expanded-artist" id="expanded-artist">Artist Name</div>
+      </div>
+
+      <!-- Scrubber -->
+      <div class="scrubber-container">
+        <input type="range" id="expanded-scrubber" min="0" max="100" value="0">
+        <div class="time-row">
+          <span id="expanded-time-current">0:00</span>
+          <span id="expanded-time-total">0:00</span>
+        </div>
+      </div>
+
+      <!-- Controls Row: Shuffle, Prev, Play/Pause, Next, Loop -->
+      <div class="playback-controls">
+        <button class="icon-btn control-secondary" id="btn-shuffle" title="Shuffle">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="16 3 21 3 21 8"></polyline>
+            <line x1="4" y1="20" x2="21" y2="3"></line>
+            <polyline points="21 16 21 21 16 21"></polyline>
+            <line x1="15" y1="15" x2="21" y2="21"></line>
+            <line x1="4" y1="4" x2="9" y2="9"></line>
+          </svg>
+        </button>
+        <button class="icon-btn" id="btn-prev" title="Previous">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polygon points="19 20 9 12 19 4 19 20"></polygon>
+            <line x1="5" y1="19" x2="5" y2="5"></line>
+          </svg>
+        </button>
+        <button class="btn-play-large" id="btn-play-large">
+          <svg id="large-play-icon" width="28" height="28" viewBox="0 0 24 24" fill="currentColor">
+            <polygon points="5 3 19 12 5 21 5 3"></polygon>
+          </svg>
+        </button>
+        <button class="icon-btn" id="btn-next" title="Next">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polygon points="5 4 15 12 5 20 5 4"></polygon>
+            <line x1="19" y1="5" x2="19" y2="19"></line>
+          </svg>
+        </button>
+        <button class="icon-btn control-secondary" id="btn-loop" title="Repeat">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="17 1 21 5 17 9"></polyline>
+            <path d="M3 11V9a4 4 0 0 1 4-4h14"></path>
+            <polyline points="7 23 3 19 7 15"></polyline>
+            <path d="M21 13v2a4 4 0 0 1-4 4H3"></path>
+          </svg>
+        </button>
+      </div>
+
+      <!-- Secondary Row: Favorite + Add to Playlist + Download (§6) -->
+      <div class="secondary-actions-row">
+        <button class="text-action-btn" id="btn-expanded-favorite">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+          </svg>
+          <span id="expanded-favorite-label">FAVORITE</span>
+        </button>
+        <button class="text-action-btn" id="btn-expanded-add-playlist">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="8" y1="6" x2="21" y2="6"></line>
+            <line x1="8" y1="12" x2="21" y2="12"></line>
+            <line x1="8" y1="18" x2="16" y2="18"></line>
+            <line x1="19" y1="16" x2="19" y2="22"></line>
+            <line x1="16" y1="19" x2="22" y2="19"></line>
+          </svg>
+          <span>+ PLAYLIST</span>
+        </button>
+        <button class="text-action-btn" id="btn-expanded-download">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+            <polyline points="7 10 12 15 17 10"></polyline>
+            <line x1="12" y1="15" x2="12" y2="3"></line>
+          </svg>
+          <span id="expanded-download-label">DOWNLOAD</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- SETTINGS SCREEN (Pushed screen off gear icon §6) -->
+    <div id="settings-screen" class="pushed-screen hidden">
+      <header class="pushed-header">
+        <button class="icon-btn" id="btn-close-settings">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="19" y1="12" x2="5" y2="12"></line>
+            <polyline points="12 19 5 12 12 5"></polyline>
+          </svg>
+        </button>
+        <span class="pushed-title">SETTINGS</span>
+        <div style="width: 40px"></div>
+      </header>
+
+      <div class="settings-body">
+        <!-- Minimal profile block -->
+        <div class="profile-block">
+          <div class="profile-meta">
+            <div class="profile-name" id="settings-profile-name">Adi</div>
+            <div class="profile-id" id="settings-profile-id">ID: owner-uuid-1</div>
+          </div>
+          <div class="role-badge" id="settings-profile-role">OWNER</div>
+        </div>
+
+        <div class="settings-section-title">DOWNLOADS &amp; STORAGE</div>
+        <div class="settings-row">
+          <div>
+            <div class="settings-label">Wi-Fi only downloads</div>
+            <div class="settings-sub">Do not use cellular data for offline tracks</div>
+          </div>
+          <label class="toggle-switch">
+            <input type="checkbox" id="toggle-wifi-only">
+            <span class="slider"></span>
+          </label>
+        </div>
+
+        <div class="storage-container" style="padding: 12px 0 0 0">
+          <div class="storage-meta">
+            <span class="storage-used" id="settings-storage-used">0.0 MB used</span>
+            <span class="storage-label">Cache limit: 5 GB</span>
+          </div>
+          <div class="storage-bar">
+            <div class="storage-fill" id="settings-storage-fill" style="width: 4%"></div>
+          </div>
+        </div>
+
+        <button class="btn-text-danger" id="btn-clear-downloads">Clear All Downloads</button>
+
+        <!-- Admin Row (Owner Only) -->
+        <div id="admin-entry-section" class="hidden">
+          <div class="settings-section-title" style="margin-top: 32px">ADMINISTRATION</div>
+          <div class="admin-link-card" id="btn-open-admin">
+            <div class="admin-link-left">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+              </svg>
+              <div>
+                <div class="admin-link-title">Admin Console</div>
+                <div class="admin-link-sub">Manage users, invites &amp; library</div>
+              </div>
+            </div>
+            <span class="chevron">›</span>
+          </div>
+        </div>
+
+        <!-- Mobile App & APK Download Section -->
+        <div class="settings-section-title" style="margin-top: 28px">MOBILE APP &amp; APK</div>
+        <div class="admin-link-card" id="btn-install-mobile" style="margin-bottom: 8px; cursor: pointer;">
+          <div class="admin-link-left">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect>
+              <line x1="12" y1="18" x2="12.01" y2="18"></line>
+            </svg>
+            <div>
+              <div class="admin-link-title" id="install-mobile-title">Install App on Phone</div>
+              <div class="admin-link-sub">1-Tap install to mobile home screen (WebAPK)</div>
+            </div>
+          </div>
+          <span class="chevron">⇣</span>
+        </div>
+
+        <div class="settings-divider"></div>
+        <button class="btn-signout" id="btn-signout">Sign Out</button>
+      </div>
+    </div>
+
+    <!-- ADMIN SCREEN (Owner Only §6) -->
+    <div id="admin-screen" class="pushed-screen hidden">
+      <header class="pushed-header">
+        <button class="icon-btn" id="btn-close-admin">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="19" y1="12" x2="5" y2="12"></line>
+            <polyline points="12 19 5 12 12 5"></polyline>
+          </svg>
+        </button>
+        <span class="pushed-title">ADMIN CONSOLE</span>
+        <div style="width: 40px"></div>
+      </header>
+
+      <div class="admin-body">
+        <!-- 1. Usage Snapshot -->
+        <div class="settings-section-title">USAGE SNAPSHOT</div>
+        <div class="stats-row">
+          <div class="stat-card">
+            <div class="stat-value" id="stat-songs">0</div>
+            <div class="stat-label">SONGS</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value" id="stat-storage">0 MB</div>
+            <div class="stat-label">STORAGE</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value" id="stat-users">0</div>
+            <div class="stat-label">USERS</div>
+          </div>
+        </div>
+
+        <!-- 2. Invite Management -->
+        <div class="section-action-header">
+          <div class="settings-section-title">INVITES (<span id="unredeemed-badge">0</span> unredeemed)</div>
+          <button class="btn-small-accent" id="btn-admin-generate-invite">+ Generate</button>
+        </div>
+        <div class="admin-list" id="admin-invites-list">
+          <!-- Rendered via JS -->
+        </div>
+
+        <!-- 3. User Management -->
+        <div class="settings-section-title" style="margin-top: 24px">USER ROLES (Tap to cycle)</div>
+        <div class="admin-list" id="admin-users-list">
+          <!-- Rendered via JS -->
+        </div>
+
+        <!-- 4. Library Bulk Management -->
+        <div class="section-action-header" style="margin-top: 24px">
+          <div class="settings-section-title">LIBRARY MANAGEMENT</div>
+          <button class="btn-small-accent" id="btn-toggle-bulk">Bulk Select</button>
+        </div>
+        <div id="bulk-actions-bar" class="bulk-bar hidden">
+          <span id="bulk-selected-count">0 selected</span>
+          <button class="btn-text-danger" id="btn-bulk-delete">Delete Selected</button>
+        </div>
+        <div class="admin-list" id="admin-songs-list">
+          <!-- Rendered via JS -->
+        </div>
+
+        <!-- 5. Playlist Storage Audit & Track Management -->
+        <div class="section-action-header" style="margin-top: 28px">
+          <div class="settings-section-title">PLAYLIST STORAGE AUDIT (<span id="admin-playlists-count">0</span> Playlists)</div>
+        </div>
+        <div class="admin-list" id="admin-playlists-storage-list">
+          <!-- Rendered via JS -->
+        </div>
+
+        <!-- 6. Cloudflare Storage Pools (Multi-Account / Unlimited Storage) -->
+        <div class="section-action-header" style="margin-top: 28px">
+          <div class="settings-section-title">CLOUDFLARE STORAGE POOLS (<span id="pools-count">1</span> Active)</div>
+          <button class="btn-small-accent" id="btn-add-pool">+ Add Account</button>
+        </div>
+        <div class="admin-list" id="admin-pools-list">
+          <!-- Rendered via JS -->
+        </div>
+
+        <!-- 6. Danger Zone -->
+        <div class="settings-section-title" style="margin-top: 36px">DANGER ZONE</div>
+        <div class="danger-box">
+          <button class="btn-text-danger" id="btn-danger-reset-invites">Revoke All Unused Invites</button>
+          <div class="danger-divider"></div>
+          <button class="btn-text-danger" id="btn-danger-demote-contributors">Reset All Users to Listener Role</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- BOTTOM SHEET: UPLOAD SONG / CREATE PLAYLIST -->
+    <div id="action-sheet" class="bottom-sheet hidden">
+      <div class="sheet-backdrop" id="sheet-backdrop"></div>
+      <div class="sheet-content">
+        <div class="sheet-handle"></div>
+        <h3 class="sheet-heading" id="sheet-heading">NEW ENTRY</h3>
+        <div id="sheet-body"></div>
+      </div>
+    </div>
+
+    <!-- UNDO SNACKBAR (§8.3) -->
+    <div id="snackbar" class="snackbar hidden">
+      <span id="snackbar-text">Track deleted</span>
+      <button id="snackbar-undo" class="snackbar-action">UNDO</button>
+    </div>
+
+    <!-- HIDDEN AUDIO ELEMENT -->
+    <audio id="audio-engine" preload="auto"></audio>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,19 @@
+{
+  "name": "musicbyadi",
+  "version": "1.0.0",
+  "description": "Private Family & Friends Music Streaming System (Flutter + Cloudflare)",
+  "main": "backend/server.js",
+  "scripts": {
+    "start": "node backend/server.js",
+    "dev:backend": "node backend/server.js",
+    "dev:web": "npx serve web -p 3000"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.21.2",
+    "jsonwebtoken": "^9.0.2"
+  },
+  "devDependencies": {
+    "serve": "^14.2.4"
+  }
+}
